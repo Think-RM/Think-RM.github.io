@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Think-RM: Enabling Long-Horizon Reasoning in Generative Reward Models">
+  <meta name="keywords" content="CoT, Reasoning, LLMs, Reward">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Think-RM: Enabling Long-Horizon Reasoning in Generative Reward Models</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="icon" href="./static/images/icon.png">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <!-- <script src="https://assets.crowd.aws/crowd-html-elements.js"></script> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+
+
+
+
+  <style>
+    /* .section {
+      padding: 3rem 1.5rem;
+    }
+
+    .container {
+      max-width: 800px;
+    }
+
+    #video-container {
+      margin-bottom: 2rem;
+    }
+
+    #question-container {
+      margin-bottom: 2rem;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .button.is-primary {
+      background-color: #3273dc;
+      border-color: transparent;
+      color: #fff;
+      transition: background-color 0.3s ease;
+    }
+
+    .button.is-primary:hover {
+      background-color: #275ab0;
+      border-color: transparent;
+    }
+
+    .title img {
+      margin-right: 0.5rem;
+    }
+
+    .select {
+      width: 100%;
+      margin-top: 1rem;
+    } */
+
+    /* Hide the "Previewing Answers Submitted by Workers" message */
+    crowd-alert {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <!-- <img src="./static/image/worldevallogo.png" style="width:6em;vertical-align: middle" alt="Logo"/>  -->
+            <h1 class="title is-1 publication-title" style="display: inline-block;">Think-RM: Enabling Long-Horizon Reasoning in Generative Reward Models</h1>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://ilgeehong.github.io/">Ilgee Hong</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=IxrYJ6EAAAAJ&hl=en">Changlong Yu</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.lqiu.info/">Liang Qiu</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://weixiangyan.github.io/">Weixiang Yan</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.isye.gatech.edu/users/zhenghao-xu">Zhenghao Xu</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://hmjianggatech.github.io/">Haoming Jiang</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=7YM-faYAAAAJ&hl=en&oi=ao">Qingru Zhang</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.amazon.science/author/qin-lu">Qin Lu</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://seanliu96.github.io/">Xin Liu</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="http://chaozhang.org/">Chao Zhang</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www2.isye.gatech.edu/~tzhao80/">Tuo Zhao</a><sup>1</sup>,</span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Georgia Institute of Technology,</span>
+            <span class="author-block"><sup>2</sup>Amazon</span>
+          </div>
+          <!-- <br>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><b style="color:#e08ba0; font-weight:normal"> <b>Under Review</b> </b></span>
+          </div> -->
+          <br>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Corresponding to:</span>
+            <span class="author-block"><a href="mailto:ihong39@gatech.edu">ihong39@gatech.edu</a>,</span>
+            <span class="author-block"><a href="mailto:tourzhao@gatech.edu">tourzhao@gatech.edu</a></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+
+              <span class="link-block">
+                <a href="https://www.arxiv.org/pdf/2505.16265"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/IlgeeHong/Think-RM"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+<!-- 
+              <span class="link-block">
+                <a href="#leaderboard"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon has-text-white">
+                    <i class="fa-solid fa-trophy"></i>
+
+                  </span>
+                  <span>Leaderboard</span>
+                </a>
+              </span> -->
+
+
+
+             <!-- <span class="link-block">
+    <a href="https://huggingface.co/spaces/Xuehai/MMWorld" 
+       class="external-link button is-normal is-rounded is-dark">
+      <span class="icon">
+        <img src="https://huggingface.co/front/assets/huggingface_logo.svg" 
+             alt="Hugging Face" 
+             style="height: 1em; vertical-align: middle;">
+      </span>
+      <span>Hugging Face Leaderboard</span>
+    </a>
+</span> -->
+
+              
+              <!-- Visualization Link. -->
+              <!-- <span class="link-block">
+                <a href="https://eval.ai/web/challenges/challenge-page/2359/overview"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon has-text-white">
+                      <i class="fa-solid fa-medal"></i>
+                  </span>
+                  <span>EvalAI</span>
+                </a>
+              </span> -->
+              <!-- EvalAI Link. -->
+              <!-- <span class="link-block">
+                <a href="#examples"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon has-text-white">
+                    <i class="fa-solid fa-book"></i>
+                  </span>
+                  <span>Examples</span>
+                </a>
+              </span> -->
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-five-fifths">
+        <h2 class="title is-3">
+          <img width="5%" src="https://cdn-icons-png.flaticon.com/512/2922/2922821.png" alt="Pipeline Icon" style="vertical-align: middle; margin-right: 8px;">
+          Think-RM Pipeline
+        </h2> 
+        <!-- <h2 class="title is-3"><img id="painting_icon" width="5%" src="https://cdn-icons-png.flaticon.com/512/5379/5379860.png"> Soft Thinking Pipeline </h2>  -->
+      </div>
+    </div>
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-six-fifths">  
+            <img id="model" width="80%" src="./static/image/Think_RM.jpg" style="display: block; margin: 0 auto;">
+            <h3 class="subtitle has-text-centered">
+              <p style="font-family:Times New Roman; margin-top: 20px;"><b> Overview of the Think-RM training framework.</b></p>
+            </h3>   
+        </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">
+        <!-- <img width="5%" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="vertical-align: middle; margin-right: 10px;"> -->
+        <img width="5%" src="https://cdn-icons-png.flaticon.com/512/2919/2919717.png" alt="Abstract Icon" style="vertical-align: middle; margin-right: 8px;">
+          Abstract
+        </h2>
+        <!-- <h2 class="title is-3">Abstract</h2> -->
+        <div class="content has-text-justified">
+          <p>
+          Reinforcement learning from human feedback (RLHF) has become a powerful post-training paradigm for aligning large language models with human preferences. A core challenge in RLHF is constructing accurate reward signals, where the conventional Bradley-Terry reward models (BT RMs) often suffer from sensitivity to data size and coverage, as well as vulnerability to reward hacking. Generative reward models (GenRMs) offer a more robust alternative by generating chain-of-thought (CoT) rationales followed by a final reward. However, existing GenRMs rely on shallow, vertically scaled reasoning, limiting their capacity to handle nuanced or complex (e.g., reasoning-intensive) tasks. Moreover, their pairwise preference outputs are incompatible with standard RLHF algorithms that require pointwise reward signals. In this work, we introduce Think-RM, a training framework that enables long-horizon reasoning in GenRMs by modeling an internal thinking process. Rather than producing structured, externally provided rationales, Think-RM generates flexible, self-guided reasoning traces that support advanced capabilities such as self-reflection, hypothetical reasoning, and divergent reasoning. To elicit these reasoning abilities, we first warm-up the models by supervised fine-tuning (SFT) over long CoT data. We then further improve the model's long-horizon abilities by rule-based reinforcement learning (RL). In addition, we propose a novel pairwise RLHF pipeline that directly optimizes policies using pairwise preference rewards, eliminating the need for pointwise reward conversion and enabling more effective use of Think-RM outputs. Experiments show that Think-RM achieves state-of-the-art results on RM-Bench, outperforming both BT RM and vertically scaled GenRM by 8%. When combined with our pairwise RLHF pipeline, it demonstrates superior end-policy performance compared to traditional approaches. This depth-oriented approach not only broadens the GenRM design space but also establishes a new paradigm for preference-based policy optimization in RLHF.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-five-fifths">
+        <h2 class="title is-3">
+          <img width="5%" src="https://cdn-icons-png.flaticon.com/512/2919/2919706.png" alt="Example Icon" style="vertical-align: middle; margin-right: 8px;">
+          Examples of reasoning abilities enabled by Think-RM
+        </h2> 
+        <!-- <h2 class="title is-3"><img id="painting_icon" width="5%" src="https://cdn-icons-png.flaticon.com/512/5379/5379860.png"> An example of Soft Thinking and CoT</h2>  -->
+      </div>
+    </div>
+
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-six-fifths">  
+            <img id="model" width="100%" src="./static/image/examples.png">
+            <h3 class="subtitle has-text-centered">
+              <p style="font-family:Times New Roman"><b>Think-RM generates flexible, self-guided reasoning traces that support advanced capabilities such as self-reflection, hypothetical reasoning, and divergent reasoning. This enables the model to solve reasoning-heavy RM tasks by extending a single CoT trajectory from hundreds to thousands of tokens.</b></p>
+            </h3>   
+        </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-five-fifths">
+        <h2 class="title is-3">
+          <img width="5%" src="https://cdn-icons-png.flaticon.com/512/2919/2919596.png" alt="Distribution Icon" style="vertical-align: middle; margin-right: 10px;">
+           Evaluation on In-Distribution and Moderately Shifted Tasks
+        </h2> 
+      </div>
+    </div>
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-six-fifths">     
+            <img id="model" width="100%" src="./static/image/table1.png">
+            <h3 class="subtitle has-text-centered">
+              <p style="font-family:Times New Roman"><b>Reward model evaluation on HelpSteer2-Preference (in-distribution) and HelpSteer3-Preference (moderate distribution shift).</b></p>
+            </h3>   
+        </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-five-fifths">
+        <h2 class="title is-3">
+          <img width="5%" src="https://cdn-icons-png.flaticon.com/512/2919/2919596.png" alt="Math Icon" style="vertical-align: middle; margin-right: 10px;">
+           Evaluation on Out-of-Distribution Tasks
+        </h2> 
+      </div>
+    </div>
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-six-fifths">     
+            <img id="model" width="100%" src="./static/image/table2.png">
+            <img id="model" width="100%" src="./static/image/table3.png">
+            <h3 class="subtitle has-text-centered">
+              <p style="font-family:Times New Roman"><b>Reward model evaluation on OOD tasks (RewardBench and RMBench).</b></p>
+            </h3>   
+        </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-five-fifths">
+        <h2 class="title is-3">
+          <img width="5%" src="https://cdn-icons-png.flaticon.com/512/1065/1065646.png" alt="Math Icon" style="vertical-align: middle; margin-right: 10px;">
+           Ablation Study
+        </h2> 
+      </div>
+    </div>
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-six-fifths">     
+            <img id="model" width="100%" src="./static/image/table4.png">
+            <h3 class="subtitle has-text-centered">
+              <p style="font-family:Times New Roman"><b>Comparison of two CoT filtering strategies for warm-up data selection. Training with the longest CoT data consistently achieves higher preference accuracy across all benchmarks, demonstrating the effectiveness of length-based CoT filtering for enhancing reasoning quality.</b></p>
+            </h3>   
+        </div>
+  </div>
+</section>
+
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{hong2025thinkrmenablinglonghorizonreasoning,
+      title={Think-RM: Enabling Long-Horizon Reasoning in Generative Reward Models}, 
+      author={Ilgee Hong and Changlong Yu and Liang Qiu and Weixiang Yan and Zhenghao Xu and Haoming Jiang and Qingru Zhang and Qin Lu and Xin Liu and Chao Zhang and Tuo Zhao},
+      year={2025},
+      eprint={2505.16265},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2505.16265},
+}</code></pre>
+  </div>
+</section>
+
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is adapted from <a rel="license"
+            href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> and <a rel="license"
+            href="https://gligen.github.io/">GLIGEN</a>, licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+
+
+
+
+<script>
+  let data = [];
+  let currentIndex = 0;
+  const videoUrlPrefix = "https://videounderstanding.s3.us-east-2.amazonaws.com/";
+
+  function loadCSV() {
+    $.ajax({
+      type: "GET",
+      url: "./static/webdemo_data.csv",
+      dataType: "text",
+      success: function(response) {
+        data = $.csv.toObjects(response);
+        updateContent();
+      }
+    });
+  }
+
+  function updateContent() {
+    if (data.length > 0 && currentIndex >= 0 && currentIndex < data.length) {
+      const currentData = data[currentIndex];
+      const videoUrl = videoUrlPrefix + currentData.video_url;
+      $('#video-source').attr('src', videoUrl);
+      $('#example-video')[0].load();
+      $('#question').text(currentData.question);
+      $('#discipline').text(currentData.domain);
+      $('#subdiscipline').text(currentData.subdomain);
+      const options = [currentData.option_a, currentData.option_b, currentData.option_c, currentData.option_d];
+      $('#options').empty();
+      options.forEach(option => {
+        $('#options').append(`<option value="${option}">${option}</option>`);
+      });
+    }
+  }
+
+  $('#next-button').on('click', function() {
+    if (currentIndex < data.length - 1) {
+      currentIndex++;
+      updateContent();
+    }
+  });
+
+  $('#prev-button').on('click', function() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateContent();
+    }
+  });
+
+  $(document).ready(function() {
+    loadCSV();
+    
+    const observer = new MutationObserver(() => {
+      const alertElement = document.querySelector('crowd-form').shadowRoot.querySelector('crowd-alert').shadowRoot.querySelector('awsui-alert');
+      if (alertElement) {
+        alertElement.style.display = 'none';
+      }
+    });
+    
+    observer.observe(document.querySelector('crowd-form').shadowRoot, { childList: true, subtree: true });
+  });
+</script>
+
+
+<!-- Additional libraries for parsing CSV -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"></script>
+
+</body>
+</html>
